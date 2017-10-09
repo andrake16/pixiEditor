@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <integer name="highlightOpacity">127</integer>
+    <integer name="fullOpacity">255</integer>
+
+</resources>
