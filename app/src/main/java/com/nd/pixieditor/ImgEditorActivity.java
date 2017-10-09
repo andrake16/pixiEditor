@@ -10,12 +10,14 @@ import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.nd.pixieditor.Classes.Box;
+import com.nd.pixieditor.Classes.DrawableInThread;
+import com.nd.pixieditor.Classes.ImgEditorView;
 import com.nd.pixieditor.Utils.BitmapTransformer;
 
 import java.util.ArrayList;
@@ -24,12 +26,11 @@ import java.util.List;
 public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouchListener  {
 
     private DrawableInThread drawableInThread;
-    Canvas canvas;
     Bitmap bitmap;
     private Paint paint;
     Paint backgroundPaint;
-    transient Box box;
-    transient List<Box> Boxen = new ArrayList<>();
+    Box box;
+    List<Box> Boxen = new ArrayList<>();
 
 
     @Override
@@ -114,11 +115,16 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         canvas.drawBitmap(bitmap, 0, 0, paint);
 
         paint.setAlpha(getResources().getInteger(R.integer.highlightOpacity));
-        for(Box box:Boxen)
+
+        //for(Box box:Boxen)
+        Box box;
+        for(int i=0;i<Boxen.size();i++) {
+            box = Boxen.get(i);
             canvas.drawRect(box.getStartPoint().x,
-                            box.getStartPoint().y,
-                            box.getEndPoint().x,
-                            box.getEndPoint().y,paint);
+                    box.getStartPoint().y,
+                    box.getEndPoint().x,
+                    box.getEndPoint().y, paint);
+        }
 
         paint.setAlpha(getResources().getInteger(R.integer.fullOpacity));
 

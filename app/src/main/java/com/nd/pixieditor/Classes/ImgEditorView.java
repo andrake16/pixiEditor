@@ -1,10 +1,10 @@
-package com.nd.pixieditor;
+package com.nd.pixieditor.Classes;
 
 import android.content.Context;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-class ImgEditorView extends SurfaceView implements SurfaceHolder.Callback {
+public class ImgEditorView extends SurfaceView implements SurfaceHolder.Callback {
 
     private ImgEditorThread ImgEditorThread;
     private DrawableInThread drawableInThread;

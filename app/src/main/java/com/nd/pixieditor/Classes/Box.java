@@ -1,4 +1,4 @@
-package com.nd.pixieditor;
+package com.nd.pixieditor.Classes;
 
 import android.graphics.PointF;
 
