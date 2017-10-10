@@ -79,8 +79,6 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     }
 
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -89,25 +87,6 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.editor_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        ShapeDrawable d = null;
-
-        switch(item.getItemId()) {
-            case R.id.editorMenu_rectangle:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-
     }
 
     @Override
