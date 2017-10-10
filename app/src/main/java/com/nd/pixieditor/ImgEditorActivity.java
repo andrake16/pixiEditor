@@ -18,6 +18,7 @@ import android.view.View;
 import com.nd.pixieditor.Classes.Box;
 import com.nd.pixieditor.Classes.DrawableInThread;
 import com.nd.pixieditor.Classes.ImgEditorView;
+import com.nd.pixieditor.Classes.PShape;
 import com.nd.pixieditor.Utils.BitmapTransformer;
 
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     Bitmap bitmap;
     private Paint paint;
     Paint backgroundPaint;
-    Box box;
-    List<Box> Boxen = new ArrayList<>();
+    Box currentBox;
+    List<PShape> Boxen = new ArrayList<>();
 
 
     @Override
@@ -81,18 +82,18 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
 
         switch(event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                box = new Box();
-                box.setStartPoint(touchPointF);
+                currentBox = new Box();
+                currentBox.setStartPoint(touchPointF);
+                currentBox.setEndPoint(touchPointF);
                 break;
             case MotionEvent.ACTION_UP:
-                box.setEndPoint(touchPointF);
-                Boxen.add(box);
+                currentBox.setEndPoint(touchPointF);
+                Boxen.add(currentBox);
+                currentBox = null;
                 break;
             case MotionEvent.ACTION_MOVE:
-                box.setEndPoint(touchPointF);
+                currentBox.setEndPoint(touchPointF);
                 break;
-
-
         }
 
        return true;
@@ -116,21 +117,15 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
 
         paint.setAlpha(getResources().getInteger(R.integer.highlightOpacity));
 
-        //for(Box box:Boxen)
-        Box box;
-        for(int i=0;i<Boxen.size();i++) {
-            box = Boxen.get(i);
-            canvas.drawRect(box.getStartPoint().x,
-                    box.getStartPoint().y,
-                    box.getEndPoint().x,
-                    box.getEndPoint().y, paint);
-        }
+        for(int i=0;i<Boxen.size();i++)
+            Boxen.get(i).draw(canvas,paint);
+        if(currentBox != null)
+            currentBox.draw(canvas,paint);
 
         paint.setAlpha(getResources().getInteger(R.integer.fullOpacity));
 
-
-
     }
+
 
     private void initPaint() {
         paint = new Paint();
