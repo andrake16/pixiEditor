@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imgListItem_imageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@android:color/black"
+        android:src="@drawable/cushion"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/imgListItem_imgNumOf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="23dp"
+        android:layout_marginTop="40dp"
+        android:text="Image 1/23"
+        app:layout_constraintLeft_toRightOf="@+id/imgListItem_imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="23dp" />
+
+    <TextView
+        android:id="@+id/imgListItem_OrigImgName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Original name"
+        app:layout_constraintLeft_toLeftOf="@+id/imgListItem_imgNumOf"
+        app:layout_constraintTop_toBottomOf="@+id/imgListItem_imgNumOf" />
+
+    <TextView
+        android:id="@+id/textimgListItem_ImgDimensions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="771x495"
+        app:layout_constraintLeft_toLeftOf="@+id/imgListItem_imgNumOf"
+        app:layout_constraintTop_toBottomOf="@+id/imgListItem_OrigImgName" />
+
+    <ImageButton
+        android:id="@+id/imgListItem_delImgBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_delete"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:drawable/button_onoff_indicator_on"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgListItem_imageView" />
+
+
+</android.support.constraint.ConstraintLayout>

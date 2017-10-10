@@ -1,5 +1,6 @@
 package com.nd.pixieditor;
 
+import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.drawable.ShapeDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.nd.pixieditor.Classes.Box;
 import com.nd.pixieditor.Classes.DrawableInThread;
@@ -40,11 +44,41 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         initDrawableInThread();
         initPaint();
         ImgEditorView imgEditorView = new ImgEditorView(this, drawableInThread);
+        fullScreenModeEnable(true);
         setContentView(imgEditorView);
         imgEditorView.setOnTouchListener(this);
 
 
     }
+
+    private void fullScreenModeEnable(boolean enable) {
+        View mDecorView;
+
+        if (enable) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mDecorView = getWindow().getDecorView();
+                mDecorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            }
+        } else {
+            mDecorView = getWindow().getDecorView();
+            mDecorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+    }
+
+
 
 
     @Override
@@ -59,7 +93,7 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.editor_menu, menu);
+        //getMenuInflater().inflate(R.menu.editor_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -125,7 +159,6 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         paint.setAlpha(getResources().getInteger(R.integer.fullOpacity));
 
     }
-
 
     private void initPaint() {
         paint = new Paint();
