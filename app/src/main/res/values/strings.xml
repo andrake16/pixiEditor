@@ -2,4 +2,6 @@
     <string name="app_name">pixiEditor</string>
     <string name="title_activity_test">test</string>
     <string name="copyFile_DirNullToast">Unfortunatelly, Error when try to copy image to this Application</string>
+    <string name="will_be_load_files">will be load file:</string>
+    <string name="load_image_from_storage">Load image from storage: </string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import com.nd.pixieditor.Adapters.ImgListAdapter;
 import com.nd.pixieditor.Utils.CustomFileUtils;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +26,14 @@ import java.util.List;
 
 public class ImagesActivity extends AppCompatActivity {
     static final int GALLERY_REQUEST_CODE = 1;
+    static final String TAG = ImagesActivity.class.toString();
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    File appImgStorageDirectoryPath;
+    List<File> dataForList = new ArrayList<>();
 
 
     @Override
@@ -35,24 +41,17 @@ public class ImagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images);
 
+        appImgStorageDirectoryPath = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         recyclerView = (RecyclerView) findViewById(R.id.imgs_recycleView);
         recyclerView.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        List<Integer> dataForList = new ArrayList<>();
-        dataForList.add(R.drawable.cushion);
-        dataForList.add(R.drawable.kotlin);
-        dataForList.add(R.drawable.cushion);
-        dataForList.add(R.drawable.cushion);
-        dataForList.add(R.drawable.cushion);
-        dataForList.add(R.drawable.kotlin);
-        dataForList.add(R.drawable.kotlin);
-        dataForList.add(R.drawable.kotlin);
-        dataForList.add(R.drawable.cushion);
+        loadAllAppStoreImagesToAdapter();
 
-        adapter = new ImgListAdapter(dataForList);
+        adapter = new ImgListAdapter(dataForList,this);
         recyclerView.setAdapter(adapter);
 
     }
@@ -90,6 +89,7 @@ public class ImagesActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         Uri selectedImageUri = null;
+        File destFilePath;
 
         switch (requestCode){
             case GALLERY_REQUEST_CODE:
@@ -97,7 +97,8 @@ public class ImagesActivity extends AppCompatActivity {
                     selectedImageUri = data.getData();
 
                     try {
-                        copyImageToLocalStorage(selectedImageUri);
+                        destFilePath = copyImageToLocalStorage(selectedImageUri);
+                        refreshAdapterAfterAddNewImg(destFilePath);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -107,31 +108,56 @@ public class ImagesActivity extends AppCompatActivity {
 
     }
 
-    private void copyImageToLocalStorage(Uri imageUri) throws IOException {
+    @Nullable
+    private File copyImageToLocalStorage(Uri imageUri) throws IOException {
 
         String realImagePath = CustomFileUtils.getRealPathFromURI(this,imageUri);
-        Log.i(this.getClass().toString(), "Will be copied file: " + realImagePath);
-        File folderToSave;
-        folderToSave = getExternalFilesDir(Environment.DIRECTORY_PICTURES); ///storage/emulated/0/Android/data/com.nd.pixieditor/files/Pictures
+        Log.i(TAG, "Will be copied file: " + realImagePath);
+        File folderToSave = appImgStorageDirectoryPath;
+        //folderToSave = getExternalFilesDir(Environment.DIRECTORY_PICTURES); ///storage/emulated/0/Android/data/com.nd.pixieditor/files/Pictures
         //folderToSave = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString(); ///storage/emulated/0/Pictures
         //folderToSave = this.getCacheDir().toString(); ///data/data/com.nd.pixieditor/cache
         //folderToSave = this.getExternalCacheDir().toString(); ///storage/emulated/0/Android/data/com.nd.pixieditor/cache
         //folderToSave = Environment.getExternalStorageDirectory().toString(); ///storage/emulated/0
         //folderToSave = getFilesDir().toString();///data/data/com.nd.pixieditor/files
-        Log.i(this.getClass().toString(), "folder to save image is: " + folderToSave);
+        Log.i(TAG, "folder to save image is: " + folderToSave);
 
         String state = Environment.getExternalStorageState(); //mounted
-        Log.i(this.getClass().toString(), "ExternalStorageState: " + state);
+        Log.i(TAG, "ExternalStorageState: " + state);
         if(!state.equals(Environment.MEDIA_MOUNTED))
-            Log.i(this.getClass().toString(), "SD Card is not Available");
+            Log.i(TAG, "SD Card is not Available");
 
         File file = new File(realImagePath);
 
-        if(folderToSave!=null)
+        if(folderToSave!=null) {
             FileUtils.copyFileToDirectory(file,folderToSave);
+            String outputFileFullPath = folderToSave + "/" + FilenameUtils.getName(file.toString());
+            return new File(outputFileFullPath);
+
+        }
         else Toast.makeText(this, R.string.copyFile_DirNullToast, Toast.LENGTH_LONG).show();
+
+        return null;
 
     }
 
+    private void loadAllAppStoreImagesToAdapter() {
+        File[] listFiles = appImgStorageDirectoryPath.listFiles();
+        for(File filePath: listFiles) {
+            dataForList.add(filePath);
+            Log.i(TAG, getString(R.string.will_be_load_files) + filePath.toString());
+        }
+
+
+
+
+    }
+
+    private void refreshAdapterAfterAddNewImg(File addedImgFullPath) {
+        dataForList.add(addedImgFullPath);
+        adapter.notifyItemInserted(dataForList.size());
+        adapter.notifyItemRangeChanged(0,dataForList.size());
+
+    }
 }
 
