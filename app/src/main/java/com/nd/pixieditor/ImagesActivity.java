@@ -1,20 +1,24 @@
 package com.nd.pixieditor;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.nd.pixieditor.Adapters.ImgListAdapter;
+import com.nd.pixieditor.Utils.CustomFileUtils;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,13 +93,45 @@ public class ImagesActivity extends AppCompatActivity {
 
         switch (requestCode){
             case GALLERY_REQUEST_CODE:
-                if(resultCode == RESULT_OK)
+                if(resultCode == RESULT_OK) {
                     selectedImageUri = data.getData();
-                Toast.makeText(this,selectedImageUri.toString(),Toast.LENGTH_LONG).show();
 
+                    try {
+                        copyImageToLocalStorage(selectedImageUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
         }
 
     }
+
+    private void copyImageToLocalStorage(Uri imageUri) throws IOException {
+
+        String realImagePath = CustomFileUtils.getRealPathFromURI(this,imageUri);
+        Log.i(this.getClass().toString(), "Will be copied file: " + realImagePath);
+        File folderToSave;
+        folderToSave = getExternalFilesDir(Environment.DIRECTORY_PICTURES); ///storage/emulated/0/Android/data/com.nd.pixieditor/files/Pictures
+        //folderToSave = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString(); ///storage/emulated/0/Pictures
+        //folderToSave = this.getCacheDir().toString(); ///data/data/com.nd.pixieditor/cache
+        //folderToSave = this.getExternalCacheDir().toString(); ///storage/emulated/0/Android/data/com.nd.pixieditor/cache
+        //folderToSave = Environment.getExternalStorageDirectory().toString(); ///storage/emulated/0
+        //folderToSave = getFilesDir().toString();///data/data/com.nd.pixieditor/files
+        Log.i(this.getClass().toString(), "folder to save image is: " + folderToSave);
+
+        String state = Environment.getExternalStorageState(); //mounted
+        Log.i(this.getClass().toString(), "ExternalStorageState: " + state);
+        if(!state.equals(Environment.MEDIA_MOUNTED))
+            Log.i(this.getClass().toString(), "SD Card is not Available");
+
+        File file = new File(realImagePath);
+
+        if(folderToSave!=null)
+            FileUtils.copyFileToDirectory(file,folderToSave);
+        else Toast.makeText(this, R.string.copyFile_DirNullToast, Toast.LENGTH_LONG).show();
+
+    }
+
 }
 

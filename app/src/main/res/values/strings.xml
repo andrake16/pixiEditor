@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">pixiEditor</string>
     <string name="title_activity_test">test</string>
+    <string name="copyFile_DirNullToast">Unfortunatelly, Error when try to copy image to this Application</string>
 </resources>
