@@ -27,6 +27,7 @@ import java.util.List;
 public class ImagesActivity extends AppCompatActivity {
     static final int GALLERY_REQUEST_CODE = 1;
     static final String TAG = ImagesActivity.class.toString();
+    public static final String EXTRA_IMG_PATH = "EXTRA_IMG_PATH";
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;

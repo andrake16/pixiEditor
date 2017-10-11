@@ -10,8 +10,10 @@ import android.graphics.PointF;
 import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,10 +27,13 @@ import com.nd.pixieditor.Classes.ImgEditorView;
 import com.nd.pixieditor.Classes.PShape;
 import com.nd.pixieditor.Utils.BitmapTransformer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouchListener  {
+
+    private static final String TAG = ImgEditorActivity.class.toString();
 
     private DrawableInThread drawableInThread;
     Bitmap bitmap;
@@ -140,12 +145,14 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     }
 
     private void initPaint() {
+        String imagePath;
+        imagePath = getIntent().getStringExtra(ImagesActivity.EXTRA_IMG_PATH);
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.YELLOW);
         paint.setAlpha(getResources().getInteger(R.integer.fullOpacity));
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.kotlin);
+        bitmap = BitmapFactory.decodeFile(imagePath);
         int canvasMaxSide = 555;
         bitmap = BitmapTransformer.getScaledDownBitmap(bitmap, canvasMaxSide, true);
 
@@ -155,4 +162,14 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
 
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.i(TAG,"back is pressed");
+    }
+
+    private void SaveEditedImage() {
+        //File saveFile = new File(ImagesActivity.this.appImgStorageDirectoryPath ,"");
+    }
 }

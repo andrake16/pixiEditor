@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nd.pixieditor.ImagesActivity;
 import com.nd.pixieditor.ImgEditorActivity;
 import com.nd.pixieditor.R;
 
@@ -88,7 +89,8 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext() ,ImgEditorActivity.class);
-                v.getContext().startActivity(intent);
+                intent.putExtra(ImagesActivity.EXTRA_IMG_PATH,dataForList.get(position).getAbsolutePath());
+                context.startActivity(intent);
             }
         });
 
