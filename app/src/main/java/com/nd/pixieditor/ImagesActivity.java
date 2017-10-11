@@ -42,14 +42,15 @@ public class ImagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images);
 
-        appImgStorageDirectoryPath = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
         recyclerView = (RecyclerView) findViewById(R.id.imgs_recycleView);
         recyclerView.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        appImgStorageDirectoryPath = ((PixiEditorApp)getApplicationContext())
+                .getAppImgStorageDirectoryPath();
+        
         loadAllAppStoreImagesToAdapter();
 
         adapter = new ImgListAdapter(dataForList,this);
@@ -114,14 +115,7 @@ public class ImagesActivity extends AppCompatActivity {
 
         String realImagePath = CustomFileUtils.getRealPathFromURI(this,imageUri);
         Log.i(TAG, "Will be copied file: " + realImagePath);
-        File folderToSave = appImgStorageDirectoryPath;
-        //folderToSave = getExternalFilesDir(Environment.DIRECTORY_PICTURES); ///storage/emulated/0/Android/data/com.nd.pixieditor/files/Pictures
-        //folderToSave = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString(); ///storage/emulated/0/Pictures
-        //folderToSave = this.getCacheDir().toString(); ///data/data/com.nd.pixieditor/cache
-        //folderToSave = this.getExternalCacheDir().toString(); ///storage/emulated/0/Android/data/com.nd.pixieditor/cache
-        //folderToSave = Environment.getExternalStorageDirectory().toString(); ///storage/emulated/0
-        //folderToSave = getFilesDir().toString();///data/data/com.nd.pixieditor/files
-        Log.i(TAG, "folder to save image is: " + folderToSave);
+        Log.i(TAG, "folder to save image is: " + appImgStorageDirectoryPath);
 
         String state = Environment.getExternalStorageState(); //mounted
         Log.i(TAG, "ExternalStorageState: " + state);
@@ -130,15 +124,9 @@ public class ImagesActivity extends AppCompatActivity {
 
         File file = new File(realImagePath);
 
-        if(folderToSave!=null) {
-            FileUtils.copyFileToDirectory(file,folderToSave);
-            String outputFileFullPath = folderToSave + "/" + FilenameUtils.getName(file.toString());
-            return new File(outputFileFullPath);
-
-        }
-        else Toast.makeText(this, R.string.copyFile_DirNullToast, Toast.LENGTH_LONG).show();
-
-        return null;
+        FileUtils.copyFileToDirectory(file,appImgStorageDirectoryPath);
+        String outputFileFullPath = appImgStorageDirectoryPath + "/" + FilenameUtils.getName(file.toString());
+        return new File(outputFileFullPath);
 
     }
 

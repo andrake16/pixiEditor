@@ -170,6 +170,7 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     }
 
     private void SaveEditedImage() {
+        File dirToSaveImage = ((PixiEditorApp)getApplicationContext()).getAppImgStorageDirectoryPath();
         //File saveFile = new File(ImagesActivity.this.appImgStorageDirectoryPath ,"");
     }
 }
