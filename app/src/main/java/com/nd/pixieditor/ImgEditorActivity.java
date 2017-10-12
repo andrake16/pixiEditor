@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,11 +33,12 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     private static final String TAG = ImgEditorActivity.class.toString();
 
     private DrawableInThread drawableInThread;
-    Bitmap bitmap;
+    Bitmap bitmapOfEditImageOrigSize;
+    Bitmap bitmapOfEditImageToFitScreenSize;
     private Paint paint;
     Paint backgroundPaint;
     Box currentBox;
-    List<PShape> Boxen = new ArrayList<>();
+    List<PShape> boxen = new ArrayList<>();
     String imagePath;
     ImgEditorView imgEditorView;
 
@@ -103,7 +105,7 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
                 break;
             case MotionEvent.ACTION_UP:
                 currentBox.setEndPoint(touchPointF);
-                Boxen.add(currentBox);
+                boxen.add(currentBox);
                 currentBox = null;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -125,15 +127,21 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         };
     }
 
-    private void drawing(Canvas canvas){
+    private void drawing(Canvas canvas) {
+        drawing(canvas,true,boxen);
+    }
 
-        canvas.drawPaint(backgroundPaint);
-        canvas.drawBitmap(bitmap, 0, 0, paint);
+    private void drawing(Canvas canvas, boolean drawBaseImage, List<PShape> listOfShapes){
+
+        if(drawBaseImage) {
+            canvas.drawPaint(backgroundPaint);
+            canvas.drawBitmap(bitmapOfEditImageToFitScreenSize, 0, 0, paint);
+        }
 
         paint.setAlpha(getResources().getInteger(R.integer.highlightOpacity));
 
-        for(int i=0;i<Boxen.size();i++)
-            Boxen.get(i).draw(canvas,paint);
+        for(int i = 0; i< listOfShapes.size(); i++)
+            listOfShapes.get(i).draw(canvas,paint);
         if(currentBox != null)
             currentBox.draw(canvas,paint);
 
@@ -148,9 +156,13 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         paint.setColor(Color.YELLOW);
         paint.setAlpha(getResources().getInteger(R.integer.fullOpacity));
 
-        bitmap = BitmapFactory.decodeFile(imagePath);
-        int canvasMaxSide = 555;
-        bitmap = BitmapTransformer.getScaledDownBitmap(bitmap, canvasMaxSide, true);
+        bitmapOfEditImageOrigSize = BitmapFactory.decodeFile(imagePath);
+        Point p = new Point();
+        ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getSize(p);
+        int canvasMaxSide = Math.min(p.x, p.y);
+        Log.i(TAG,"*Display dimensions* " + p.x + "x" + p.y);
+        Log.i(TAG,"*Canvas Max Side is* " + canvasMaxSide);
+        bitmapOfEditImageToFitScreenSize = BitmapTransformer.getScaledDownBitmap(bitmapOfEditImageOrigSize, canvasMaxSide, true);
 
         backgroundPaint = new Paint();
         int color = ContextCompat.getColor(this,R.color.editorBackGroundColor);
@@ -192,10 +204,40 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     }
 
     private Bitmap drawAndGetBitmapForSave() {
-        Bitmap.Config conf = Bitmap.Config.RGB_565;
-        Bitmap bitmap = Bitmap.createBitmap(700,700,conf);
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = Bitmap.createBitmap(
+                bitmapOfEditImageOrigSize.getWidth(),
+                bitmapOfEditImageOrigSize.getHeight(),
+                conf);
         Canvas canvas = new Canvas(bitmap);
-        drawing(canvas);
+        canvas.drawBitmap(bitmapOfEditImageOrigSize, 0, 0, paint);
+        drawing(canvas,false, calculatePositionOfBoxenForOrigImgSize());
         return bitmap;
     }
+
+    private List<PShape> calculatePositionOfBoxenForOrigImgSize() {
+        List<PShape> reBoxen = new ArrayList<>();
+        float scaleFactor =(float) bitmapOfEditImageOrigSize.getWidth()/
+                (float) bitmapOfEditImageToFitScreenSize.getWidth();
+
+        PointF startP,endP;
+        Box reBox;
+
+        for(PShape b : boxen) {
+            startP = ((Box)b).getStartPoint();
+            endP = ((Box)b).getEndPoint();
+            reBox = new Box();
+            reBox.setStartPoint( new PointF(
+                    startP.x*scaleFactor,
+                    startP.y*scaleFactor) );
+            reBox.setEndPoint( new PointF(
+                    endP.x*scaleFactor,
+                    endP.y*scaleFactor) );
+
+            reBoxen.add(reBox);
+        }
+    return reBoxen;
+    }
+
+
 }
