@@ -4,4 +4,7 @@
     <string name="copyFile_DirNullToast">Unfortunatelly, Error when try to copy image to this Application</string>
     <string name="will_be_load_files">will be load file:</string>
     <string name="load_image_from_storage">Load image from storage: </string>
+    <string name="imgListMenu_add_image_from_gallery">Add image from gallery</string>
+    <string name="imgListMenu_reload_images">Reload Images</string>
+    <string name="imgListMenu_clear_list">Clear List</string>
 </resources>

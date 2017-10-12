@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/imgListMenu_addImg"
-        android:title="Add image from gallery"
+        android:title="@string/imgListMenu_add_image_from_gallery"
         android:orderInCategory="0">
     </item>
-    <item android:id="@+id/imgListMenu_clearList"
-        android:title="Clear List"
+    <item android:id="@+id/imgListMenu_reloadImages"
+        android:title="@string/imgListMenu_reload_images"
         android:orderInCategory="1">
+    </item>
+    <item android:id="@+id/imgListMenu_clearList"
+        android:title="@string/imgListMenu_clear_list"
+        android:orderInCategory="2">
     </item>
 
 

@@ -50,7 +50,7 @@ public class ImagesActivity extends AppCompatActivity {
 
         appImgStorageDirectoryPath = ((PixiEditorApp)getApplicationContext())
                 .getAppImgStorageDirectoryPath();
-        
+
         loadAllAppStoreImagesToAdapter();
 
         adapter = new ImgListAdapter(dataForList,this);
@@ -70,9 +70,13 @@ public class ImagesActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.imgListMenu_addImg:
                 pickImageFromGallery();
-                //Toast.makeText(this,"i am starting to add an image",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.imgListMenu_reloadImages:
+                loadAllAppStoreImagesToAdapter();
+                adapter.notifyDataSetChanged();
                 break;
         }
+
 
         return super.onOptionsItemSelected(item);
 
@@ -131,6 +135,7 @@ public class ImagesActivity extends AppCompatActivity {
     }
 
     private void loadAllAppStoreImagesToAdapter() {
+        dataForList.clear();
         File[] listFiles = appImgStorageDirectoryPath.listFiles();
         for(File filePath: listFiles) {
             dataForList.add(filePath);

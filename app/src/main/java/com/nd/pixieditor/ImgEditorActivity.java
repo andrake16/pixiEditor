@@ -1,21 +1,16 @@
 package com.nd.pixieditor;
 
-import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +23,7 @@ import com.nd.pixieditor.Classes.PShape;
 import com.nd.pixieditor.Utils.BitmapTransformer;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +37,8 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     Paint backgroundPaint;
     Box currentBox;
     List<PShape> Boxen = new ArrayList<>();
+    String imagePath;
+    ImgEditorView imgEditorView;
 
 
     @Override
@@ -48,11 +46,10 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         super.onCreate(savedInstanceState);
         initDrawableInThread();
         initPaint();
-        ImgEditorView imgEditorView = new ImgEditorView(this, drawableInThread);
+        imgEditorView = new ImgEditorView(this, drawableInThread);
         fullScreenModeEnable(true);
         setContentView(imgEditorView);
         imgEditorView.setOnTouchListener(this);
-
 
     }
 
@@ -145,7 +142,6 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     }
 
     private void initPaint() {
-        String imagePath;
         imagePath = getIntent().getStringExtra(ImagesActivity.EXTRA_IMG_PATH);
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
@@ -167,10 +163,39 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     public void onBackPressed() {
         super.onBackPressed();
         Log.i(TAG,"back is pressed");
+        saveEditedImage();
+
     }
 
-    private void SaveEditedImage() {
+    private void saveEditedImage() {
         File dirToSaveImage = ((PixiEditorApp)getApplicationContext()).getAppImgStorageDirectoryPath();
-        //File saveFile = new File(ImagesActivity.this.appImgStorageDirectoryPath ,"");
+
+        //File saveFile = new File(dirToSaveImage , FilenameUtils.getName(imagePath));
+        File saveFile = new File(dirToSaveImage , "blabla.jpg");
+
+
+        try {
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(saveFile);
+                Bitmap bitmap = drawAndGetBitmapForSave();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+            } finally {
+                if (fos != null) fos.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private Bitmap drawAndGetBitmapForSave() {
+        Bitmap.Config conf = Bitmap.Config.RGB_565;
+        Bitmap bitmap = Bitmap.createBitmap(700,700,conf);
+        Canvas canvas = new Canvas(bitmap);
+        drawing(canvas);
+        return bitmap;
     }
 }

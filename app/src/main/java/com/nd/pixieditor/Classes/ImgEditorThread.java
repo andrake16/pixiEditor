@@ -1,5 +1,6 @@
 package com.nd.pixieditor.Classes;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
@@ -35,4 +36,6 @@ public class ImgEditorThread extends Thread {
             }
         }
     }
+
+
 }

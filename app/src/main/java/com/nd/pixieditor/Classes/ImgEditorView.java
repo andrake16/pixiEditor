@@ -1,6 +1,7 @@
 package com.nd.pixieditor.Classes;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -39,5 +40,10 @@ public class ImgEditorView extends SurfaceView implements SurfaceHolder.Callback
             } catch (InterruptedException e) {
             }
         }
+    }
+
+
+    public ImgEditorThread getImgEditorThread() {
+        return ImgEditorThread;
     }
 }
