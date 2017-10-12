@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListItemHolder> {
@@ -29,8 +30,8 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
     Context context;
     private List<File> dataForList;
 
-    public ImgListAdapter(List<File> dataForList, Context context) {
-        this.dataForList = dataForList;
+    public ImgListAdapter(Context context) {
+        this.dataForList = new ArrayList<File>();
         this.context = context;
     }
 
@@ -66,6 +67,9 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
         Uri imageUri = Uri.parse("file://" + dataForList.get(position).toString());
         Log.i(TAG, context.getString(R.string.load_image_from_storage) + imageUri.toString());
 
+        //next string fix issue when 1) add img 2)change and save 3) del img 4) add the same img
+        //in this case changes will be shown until change imageview Uri
+        holder.imageView.setImageURI(null);
         holder.imageView.setImageURI(imageUri);
         holder.imgNumOf.setText("Image " + (position+1) + " of " + getItemCount());
         //holder.origImgName.setText(dataForList.get(position));
@@ -104,5 +108,17 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
     public int getItemCount() {
         return dataForList.size();
     }
+
+
+    public void addImage(File file) {
+        dataForList.add(file);
+        this.notifyItemInserted(dataForList.size());
+        this.notifyItemRangeChanged(0,dataForList.size());
+    }
+
+    public void clearList() {
+        dataForList.clear();
+    }
+
 
 }

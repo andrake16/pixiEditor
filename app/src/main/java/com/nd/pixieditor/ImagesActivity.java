@@ -31,11 +31,10 @@ public class ImagesActivity extends AppCompatActivity {
     public static final String EXTRA_IMG_POSITION = "EXTRA_IMG_POSITION";
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private ImgListAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
     File appImgStorageDirectoryPath;
-    List<File> dataForList = new ArrayList<>();
 
 
     @Override
@@ -52,9 +51,8 @@ public class ImagesActivity extends AppCompatActivity {
         appImgStorageDirectoryPath = ((PixiEditorApp)getApplicationContext())
                 .getAppImgStorageDirectoryPath();
 
+        adapter = new ImgListAdapter(this);
         loadAllAppStoreImagesToAdapter();
-
-        adapter = new ImgListAdapter(dataForList,this);
         recyclerView.setAdapter(adapter);
         ((PixiEditorApp)getApplicationContext()).setImgListAdapter(adapter);
 
@@ -106,7 +104,7 @@ public class ImagesActivity extends AppCompatActivity {
 
                     try {
                         destFilePath = copyImageToLocalStorage(selectedImageUri);
-                        refreshAdapterAfterAddNewImg(destFilePath);
+                         adapter.addImage(destFilePath);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -138,10 +136,10 @@ public class ImagesActivity extends AppCompatActivity {
     }
 
     private void loadAllAppStoreImagesToAdapter() {
-        dataForList.clear();
+        adapter.clearList();
         File[] listFiles = appImgStorageDirectoryPath.listFiles();
         for(File filePath: listFiles) {
-            dataForList.add(filePath);
+            adapter.addImage(filePath);
             Log.i(TAG, getString(R.string.will_be_load_files) + filePath.toString());
         }
 
@@ -150,11 +148,5 @@ public class ImagesActivity extends AppCompatActivity {
 
     }
 
-    private void refreshAdapterAfterAddNewImg(File addedImgFullPath) {
-        dataForList.add(addedImgFullPath);
-        adapter.notifyItemInserted(dataForList.size());
-        adapter.notifyItemRangeChanged(0,dataForList.size());
-
-    }
 }
 
