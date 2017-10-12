@@ -1,5 +1,6 @@
 package com.nd.pixieditor.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -90,6 +91,7 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext() ,ImgEditorActivity.class);
                 intent.putExtra(ImagesActivity.EXTRA_IMG_PATH,dataForList.get(position).getAbsolutePath());
+                intent.putExtra(ImagesActivity.EXTRA_IMG_POSITION,position);
                 context.startActivity(intent);
             }
         });
@@ -102,4 +104,5 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
     public int getItemCount() {
         return dataForList.size();
     }
+
 }

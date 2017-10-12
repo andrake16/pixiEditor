@@ -7,4 +7,11 @@
     <string name="imgListMenu_add_image_from_gallery">Add image from gallery</string>
     <string name="imgListMenu_reload_images">Reload Images</string>
     <string name="imgListMenu_clear_list">Clear List</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ImgEditor_saveDialog_Title">Save Dialog</string>
+    <string name="ImgEditor_saveDialog_SaveBtnText">save</string>
+    <string name="ImgEditor_saveDialog_discardBtnText">discard changes</string>
+    <string name="save_changes_for_this_image">Save changes for this Image ?</string>
 </resources>

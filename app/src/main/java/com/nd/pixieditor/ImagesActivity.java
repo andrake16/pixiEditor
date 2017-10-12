@@ -28,6 +28,7 @@ public class ImagesActivity extends AppCompatActivity {
     static final int GALLERY_REQUEST_CODE = 1;
     static final String TAG = ImagesActivity.class.toString();
     public static final String EXTRA_IMG_PATH = "EXTRA_IMG_PATH";
+    public static final String EXTRA_IMG_POSITION = "EXTRA_IMG_POSITION";
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -43,7 +44,7 @@ public class ImagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_images);
 
         recyclerView = (RecyclerView) findViewById(R.id.imgs_recycleView);
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(false);
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -55,6 +56,7 @@ public class ImagesActivity extends AppCompatActivity {
 
         adapter = new ImgListAdapter(dataForList,this);
         recyclerView.setAdapter(adapter);
+        ((PixiEditorApp)getApplicationContext()).setImgListAdapter(adapter);
 
     }
 
@@ -110,6 +112,7 @@ public class ImagesActivity extends AppCompatActivity {
                     }
                 }
                 break;
+
         }
 
     }

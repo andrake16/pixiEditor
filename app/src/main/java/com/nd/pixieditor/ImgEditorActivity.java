@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,7 +22,10 @@ import com.nd.pixieditor.Classes.Box;
 import com.nd.pixieditor.Classes.DrawableInThread;
 import com.nd.pixieditor.Classes.ImgEditorView;
 import com.nd.pixieditor.Classes.PShape;
+import com.nd.pixieditor.Fragments.SaveChangesDialogFragment;
 import com.nd.pixieditor.Utils.BitmapTransformer;
+
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +35,7 @@ import java.util.List;
 public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouchListener  {
 
     private static final String TAG = ImgEditorActivity.class.toString();
+    public static final String SAVE_CHANGES_DIALOG = "SAVE_CHANGES_DIALOG";
 
     private DrawableInThread drawableInThread;
     Bitmap bitmapOfEditImageOrigSize;
@@ -41,6 +46,7 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     List<PShape> boxen = new ArrayList<>();
     String imagePath;
     ImgEditorView imgEditorView;
+    int positionOfEditingImg;
 
 
     @Override
@@ -173,17 +179,17 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Log.i(TAG,"back is pressed");
-        saveEditedImage();
+        saveDialog();
+        //super.onBackPressed();
 
     }
 
     private void saveEditedImage() {
         File dirToSaveImage = ((PixiEditorApp)getApplicationContext()).getAppImgStorageDirectoryPath();
 
-        //File saveFile = new File(dirToSaveImage , FilenameUtils.getName(imagePath));
-        File saveFile = new File(dirToSaveImage , "blabla.jpg");
+        File saveFile = new File(dirToSaveImage , FilenameUtils.getName(imagePath));
+        //File saveFile = new File(dirToSaveImage , "blabla.jpg");
 
 
         try {
@@ -239,5 +245,28 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     return reBoxen;
     }
 
+
+    private void saveDialog() {
+        if(boxen.size()>0) {
+            FragmentManager manager = getSupportFragmentManager();
+            SaveChangesDialogFragment dialogFragment = new SaveChangesDialogFragment();
+            dialogFragment.show(manager,SAVE_CHANGES_DIALOG);
+        }
+        else onDialogDiscardChanges();
+
+    }
+
+
+    public void onDialogChangesShouldBeSaved() {
+        saveEditedImage();
+        int position = getIntent().getIntExtra(ImagesActivity.EXTRA_IMG_POSITION,0);
+        ((PixiEditorApp)getApplicationContext()).getImgListAdapter().notifyItemChanged(position);
+
+        super.onBackPressed();
+    }
+
+    public void onDialogDiscardChanges() {
+        super.onBackPressed();
+    }
 
 }
