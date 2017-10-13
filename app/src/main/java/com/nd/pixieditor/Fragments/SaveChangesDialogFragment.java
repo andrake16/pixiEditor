@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.TextView;
 
 import com.nd.pixieditor.ImgEditorActivity;
@@ -23,9 +22,9 @@ public class SaveChangesDialogFragment extends DialogFragment implements DialogI
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog alertDialog =  new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.ImgEditor_saveDialog_Title)
-                .setPositiveButton(R.string.ImgEditor_saveDialog_SaveBtnText, this)
-                .setNegativeButton(R.string.ImgEditor_saveDialog_discardBtnText, this)
+                .setTitle(R.string.imgEditor_saveDialog_Title)
+                .setPositiveButton(R.string.imgEditor_saveDialog_SaveBtnText, this)
+                .setNegativeButton(R.string.imgEditor_saveDialog_discardBtnText, this)
                 .setCancelable(false)
                 .setMessage(R.string.save_changes_for_this_image)
                 .show();

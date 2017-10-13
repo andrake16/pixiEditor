@@ -4,5 +4,5 @@
     <integer name="highlightOpacity">127</integer>
     <integer name="fullOpacity">255</integer>
 
-    <integer name="GalleryListThumbNailSize">150</integer>
+    <integer name="galleryListThumbNailSize">150</integer>
 </resources>

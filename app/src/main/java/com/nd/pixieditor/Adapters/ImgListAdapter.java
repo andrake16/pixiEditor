@@ -1,11 +1,9 @@
 package com.nd.pixieditor.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -133,7 +131,7 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
         Bitmap thumbN = BitmapFactory.decodeFile(file.toString());
         thumbN = BitmapTransformer.getScaledDownBitmap(
                 thumbN,
-                context.getResources().getInteger(R.integer.GalleryListThumbNailSize),
+                context.getResources().getInteger(R.integer.galleryListThumbNailSize),
                 false);
         thumbNBitmapList.add(thumbN);
     }
@@ -143,7 +141,7 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
         Bitmap thumbN = BitmapFactory.decodeFile(dataForList.get(position).toString());
         thumbN = BitmapTransformer.getScaledDownBitmap(
                 thumbN,
-                context.getResources().getInteger(R.integer.GalleryListThumbNailSize),
+                context.getResources().getInteger(R.integer.galleryListThumbNailSize),
                 false);
         thumbNBitmapList.set(position,thumbN);
 
