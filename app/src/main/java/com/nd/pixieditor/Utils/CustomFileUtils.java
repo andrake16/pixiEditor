@@ -31,40 +31,4 @@ public class CustomFileUtils {
         }
     }
 
-    private static boolean copyFile(File src,File dst)throws IOException {
-        if(src.getAbsolutePath().toString().equals(dst.getAbsolutePath().toString())){
-
-            return true;
-
-        }else{
-            InputStream is=new FileInputStream(src);
-            OutputStream os=new FileOutputStream(dst);
-            byte[] buff=new byte[1024];
-            int len;
-            while((len=is.read(buff))>0){
-                os.write(buff,0,len);
-            }
-            is.close();
-            os.close();
-        }
-        return true;
-    }
-
-
-    public static void copyFileViaChannel(File src, File dst) throws IOException
-    {
-        FileChannel inChannel = new FileInputStream(src).getChannel();
-        FileChannel outChannel = new FileOutputStream(dst).getChannel();
-        try
-        {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        }
-        finally
-        {
-            if (inChannel != null)
-                inChannel.close();
-            if (outChannel != null)
-                outChannel.close();
-        }
-    }
 }

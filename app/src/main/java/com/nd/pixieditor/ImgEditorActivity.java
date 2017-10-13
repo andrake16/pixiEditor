@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.nd.pixieditor.Adapters.ImgListAdapter;
 import com.nd.pixieditor.Classes.Box;
 import com.nd.pixieditor.Classes.DrawableInThread;
 import com.nd.pixieditor.Classes.ImgEditorView;
@@ -237,8 +238,6 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         File dirToSaveImage = ((PixiEditorApp)getApplicationContext()).getAppImgStorageDirectoryPath();
 
         File saveFile = new File(dirToSaveImage , FilenameUtils.getName(imagePath));
-        //File saveFile = new File(dirToSaveImage , "blabla.jpg");
-
 
         try {
             FileOutputStream fos = null;
@@ -314,7 +313,9 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     public void onDialogChangesShouldBeSaved() {
         saveEditedImage();
         int position = getIntent().getIntExtra(ImagesActivity.EXTRA_IMG_POSITION,0);
-        ((PixiEditorApp)getApplicationContext()).getImgListAdapter().notifyItemChanged(position);
+        ImgListAdapter adapter = ((PixiEditorApp)getApplicationContext()).getImgListAdapter();
+        adapter.notifyItemChanged(position);
+        adapter.onThumbnailChanged(position);
 
         super.onBackPressed();
     }

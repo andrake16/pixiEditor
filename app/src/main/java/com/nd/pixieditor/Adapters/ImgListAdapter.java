@@ -3,6 +3,8 @@ package com.nd.pixieditor.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.nd.pixieditor.ImagesActivity;
 import com.nd.pixieditor.ImgEditorActivity;
 import com.nd.pixieditor.R;
+import com.nd.pixieditor.Utils.BitmapTransformer;
 
 import org.apache.commons.io.FileUtils;
 
@@ -29,10 +32,12 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
     static final String TAG = ImgListAdapter.class.toString();
     Context context;
     private List<File> dataForList;
+    private List<Bitmap> thumbNBitmapList = new ArrayList<>();
 
     public ImgListAdapter(Context context) {
         this.dataForList = new ArrayList<File>();
         this.context = context;
+
     }
 
 
@@ -64,13 +69,14 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
 
     @Override
     public void onBindViewHolder(final ImgListItemHolder holder, final int position) {
-        Uri imageUri = Uri.parse("file://" + dataForList.get(position).toString());
-        Log.i(TAG, context.getString(R.string.load_image_from_storage) + imageUri.toString());
+        //Uri imageUri = Uri.parse("file://" + dataForList.get(position).toString());
+        //Log.i(TAG, context.getString(R.string.load_image_from_storage) + imageUri.toString());
 
         //next string fix issue when 1) add img 2)change and save 3) del img 4) add the same img
         //in this case changes will be shown until change imageview Uri
-        holder.imageView.setImageURI(null);
-        holder.imageView.setImageURI(imageUri);
+        //holder.imageView.setImageURI(null);
+        holder.imageView.setImageBitmap(thumbNBitmapList.get(position));
+
         holder.imgNumOf.setText("Image " + (position+1) + " of " + getItemCount());
         //holder.origImgName.setText(dataForList.get(position));
         holder.imgDimensions.setText("655x963");
@@ -84,6 +90,7 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
                     e.printStackTrace();
                 }
                 dataForList.remove(position);
+                thumbNBitmapList.remove(position);
                 ImgListAdapter.this.notifyItemRemoved(position);
                 //need from 0 because we should recalculate imgNumOf
                 ImgListAdapter.this.notifyItemRangeChanged(0,dataForList.size());
@@ -114,11 +121,24 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
         dataForList.add(file);
         this.notifyItemInserted(dataForList.size());
         this.notifyItemRangeChanged(0,dataForList.size());
+        createThumbNAddToList(file);
     }
 
     public void clearList() {
         dataForList.clear();
     }
 
+    private void createThumbNAddToList(File file) {
+        Log.i(TAG,"create Thumbnail for: " + file.toString());
+        Bitmap thumbN = BitmapFactory.decodeFile(file.toString());
+        thumbN = BitmapTransformer.getScaledDownBitmap(
+                thumbN,
+                context.getResources().getInteger(R.integer.GalleryListThumbNailSize),
+                false);
+        thumbNBitmapList.add(thumbN);
+    }
 
+    public void onThumbnailChanged(int position) {
+
+    }
 }

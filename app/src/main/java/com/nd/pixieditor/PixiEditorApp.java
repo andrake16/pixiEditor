@@ -15,7 +15,7 @@ import java.util.List;
 public class PixiEditorApp extends Application {
 
     private File appImgStorageDirectoryPath;
-    private RecyclerView.Adapter imgListAdapter;
+    private ImgListAdapter imgListAdapter;
     private List<PShape> boxenTmp = new ArrayList<>();
 
     @Override
@@ -37,11 +37,11 @@ public class PixiEditorApp extends Application {
         this.appImgStorageDirectoryPath = appImgStorageDirectoryPath;
     }
 
-    public RecyclerView.Adapter getImgListAdapter() {
+    public ImgListAdapter getImgListAdapter() {
         return imgListAdapter;
     }
 
-    public void setImgListAdapter(RecyclerView.Adapter imgListAdapter) {
+    public void setImgListAdapter(ImgListAdapter imgListAdapter) {
         this.imgListAdapter = imgListAdapter;
     }
 
