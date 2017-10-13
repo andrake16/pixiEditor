@@ -32,10 +32,11 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
     static final String TAG = ImgListAdapter.class.toString();
     Context context;
     private List<File> dataForList;
-    private List<Bitmap> thumbNBitmapList = new ArrayList<>();
+    private List<Bitmap> thumbNBitmapList;
 
     public ImgListAdapter(Context context) {
         this.dataForList = new ArrayList<File>();
+        this.thumbNBitmapList = new ArrayList<Bitmap>();
         this.context = context;
 
     }
@@ -69,12 +70,10 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
 
     @Override
     public void onBindViewHolder(final ImgListItemHolder holder, final int position) {
-        //Uri imageUri = Uri.parse("file://" + dataForList.get(position).toString());
-        //Log.i(TAG, context.getString(R.string.load_image_from_storage) + imageUri.toString());
 
         //next string fix issue when 1) add img 2)change and save 3) del img 4) add the same img
         //in this case changes will be shown until change imageview Uri
-        //holder.imageView.setImageURI(null);
+        holder.imageView.setImageURI(null);
         holder.imageView.setImageBitmap(thumbNBitmapList.get(position));
 
         holder.imgNumOf.setText("Image " + (position+1) + " of " + getItemCount());
@@ -126,6 +125,7 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
 
     public void clearList() {
         dataForList.clear();
+        thumbNBitmapList.clear();
     }
 
     private void createThumbNAddToList(File file) {
@@ -139,6 +139,15 @@ public class ImgListAdapter extends RecyclerView.Adapter<ImgListAdapter.ImgListI
     }
 
     public void onThumbnailChanged(int position) {
+        Log.i(TAG,"udate Thumbnail for: " + dataForList.get(position).toString());
+        Bitmap thumbN = BitmapFactory.decodeFile(dataForList.get(position).toString());
+        thumbN = BitmapTransformer.getScaledDownBitmap(
+                thumbN,
+                context.getResources().getInteger(R.integer.GalleryListThumbNailSize),
+                false);
+        thumbNBitmapList.set(position,thumbN);
+
+
 
     }
 }
