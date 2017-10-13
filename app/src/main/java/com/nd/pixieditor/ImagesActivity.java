@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.nd.pixieditor.Adapters.ImgListAdapter;
 import com.nd.pixieditor.Utils.CustomFileUtils;
@@ -21,8 +20,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ImagesActivity extends AppCompatActivity {
     static final int GALLERY_REQUEST_CODE = 1;
@@ -129,8 +126,13 @@ public class ImagesActivity extends AppCompatActivity {
 
         File file = new File(realImagePath);
 
-        FileUtils.copyFileToDirectory(file,appImgStorageDirectoryPath);
-        String outputFileFullPath = appImgStorageDirectoryPath + "/" + FilenameUtils.getName(file.toString());
+        String outputFileFullPath = appImgStorageDirectoryPath + "/"
+                + FilenameUtils.getBaseName(file.toString())
+                + "_" + System.currentTimeMillis()
+                +"." + FilenameUtils.getExtension(file.toString());
+
+        FileUtils.copyFile(file,new File(outputFileFullPath));
+
         return new File(outputFileFullPath);
 
     }
