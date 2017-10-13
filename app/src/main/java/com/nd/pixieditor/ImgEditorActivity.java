@@ -1,5 +1,6 @@
 package com.nd.pixieditor;
 
+import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,7 +25,6 @@ import com.nd.pixieditor.Classes.DrawableInThread;
 import com.nd.pixieditor.Classes.ImgEditorView;
 import com.nd.pixieditor.Classes.PShape;
 import com.nd.pixieditor.Fragments.SaveChangesDialogFragment;
-import com.nd.pixieditor.Utils.BitmapTransformer;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -36,7 +36,8 @@ import java.util.List;
 public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouchListener  {
 
     private static final String TAG = ImgEditorActivity.class.toString();
-    public static final String SAVE_CHANGES_DIALOG = "SAVE_CHANGES_DIALOG";
+    private static final String SAVE_CHANGES_DIALOG = "SAVE_CHANGES_DIALOG";
+    private static final String OLD_IMG_DIM_X = "OLD_IMG_DIM_X";
 
     private DrawableInThread drawableInThread;
     Bitmap bitmapOfEditImageOrigSize;
@@ -54,6 +55,19 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         super.onCreate(savedInstanceState);
         initDrawableInThread();
         initPaint();
+
+
+        if(savedInstanceState != null) {
+            boxen = ((PixiEditorApp) getApplication()).getBoxenTmp();
+            //((PixiEditorApp)getApplication()).getBoxenTmp().clear();
+            List<PShape> newBoxen = new ArrayList<>();
+            float scaleFactorForBoxen = ( (float)bitmapOfEditImageToFitScreenSize.getWidth()) /
+                    savedInstanceState.getInt(OLD_IMG_DIM_X);
+            newBoxen = calculatePositionOfBoxenForOrigImgSize(scaleFactorForBoxen);
+            boxen = newBoxen;
+        }
+
+
         imgEditorView = new ImgEditorView(this, drawableInThread);
         fullScreenModeEnable(true);
         setContentView(imgEditorView);
@@ -61,33 +75,14 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
 
     }
 
-    private void fullScreenModeEnable(boolean enable) {
-        View mDecorView;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        ((PixiEditorApp)getApplication()).setBoxenTmp(boxen);
+        outState.putInt(OLD_IMG_DIM_X,bitmapOfEditImageToFitScreenSize.getWidth());
+        super.onSaveInstanceState(outState);
 
-        if (enable) {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                mDecorView = getWindow().getDecorView();
-                mDecorView.setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
-            }
-        } else {
-            mDecorView = getWindow().getDecorView();
-            mDecorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
     }
-
 
     @Override
     protected void onResume() {
@@ -123,6 +118,32 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
 
     }
 
+    private void fullScreenModeEnable(boolean enable) {
+        View mDecorView;
+
+        if (enable) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mDecorView = getWindow().getDecorView();
+                mDecorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            }
+        } else {
+            mDecorView = getWindow().getDecorView();
+            mDecorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+    }
 
     private void initDrawableInThread() {
         drawableInThread = new DrawableInThread() {
@@ -134,6 +155,7 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     }
 
     private void drawing(Canvas canvas) {
+
         drawing(canvas,true,boxen);
     }
 
@@ -242,15 +264,20 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
                 bitmapOfEditImageOrigSize.getHeight(),
                 conf);
         Canvas canvas = new Canvas(bitmap);
+        paint.setAlpha(getResources().getInteger(R.integer.fullOpacity)); //for ensure
         canvas.drawBitmap(bitmapOfEditImageOrigSize, 0, 0, paint);
         drawing(canvas,false, calculatePositionOfBoxenForOrigImgSize());
         return bitmap;
     }
 
     private List<PShape> calculatePositionOfBoxenForOrigImgSize() {
-        List<PShape> reBoxen = new ArrayList<>();
         float scaleFactor =(float) bitmapOfEditImageOrigSize.getWidth()/
                 (float) bitmapOfEditImageToFitScreenSize.getWidth();
+        return calculatePositionOfBoxenForOrigImgSize(scaleFactor);
+    }
+
+    private List<PShape> calculatePositionOfBoxenForOrigImgSize(float scaleFactor) {
+        List<PShape> reBoxen = new ArrayList<>();
 
         PointF startP,endP;
         Box reBox;
@@ -270,6 +297,7 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         }
     return reBoxen;
     }
+
 
 
     private void saveDialog() {

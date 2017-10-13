@@ -6,13 +6,17 @@ import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 
 import com.nd.pixieditor.Adapters.ImgListAdapter;
+import com.nd.pixieditor.Classes.PShape;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PixiEditorApp extends Application {
 
     private File appImgStorageDirectoryPath;
     private RecyclerView.Adapter imgListAdapter;
+    private List<PShape> boxenTmp = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -39,5 +43,13 @@ public class PixiEditorApp extends Application {
 
     public void setImgListAdapter(RecyclerView.Adapter imgListAdapter) {
         this.imgListAdapter = imgListAdapter;
+    }
+
+    public List<PShape> getBoxenTmp() {
+        return boxenTmp;
+    }
+
+    public void setBoxenTmp(List<PShape> boxenTmp) {
+        this.boxenTmp = boxenTmp;
     }
 }
