@@ -50,7 +50,7 @@ public class BitmapTransformer {
         return getResizedBitmap(bitmap, newWidth, newHeight, isNecessaryToKeepOrig);
     }
 
-    private static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight, boolean isNecessaryToKeepOrig) {
+    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight, boolean isNecessaryToKeepOrig) {
         int width = bm.getWidth();
         int height = bm.getHeight();
         float scaleWidth = ((float) newWidth) / width;

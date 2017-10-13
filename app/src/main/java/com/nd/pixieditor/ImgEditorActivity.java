@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -46,7 +47,6 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
     List<PShape> boxen = new ArrayList<>();
     String imagePath;
     ImgEditorView imgEditorView;
-    int positionOfEditingImg;
 
 
     @Override
@@ -163,17 +163,43 @@ public class ImgEditorActivity extends AppCompatActivity  implements View.OnTouc
         paint.setAlpha(getResources().getInteger(R.integer.fullOpacity));
 
         bitmapOfEditImageOrigSize = BitmapFactory.decodeFile(imagePath);
-        Point p = new Point();
-        ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getSize(p);
-        int canvasMaxSide = Math.min(p.x, p.y);
-        Log.i(TAG,"*Display dimensions* " + p.x + "x" + p.y);
-        Log.i(TAG,"*Canvas Max Side is* " + canvasMaxSide);
-        bitmapOfEditImageToFitScreenSize = BitmapTransformer.getScaledDownBitmap(bitmapOfEditImageOrigSize, canvasMaxSide, true);
+        bitmapOfEditImageToFitScreenSize = fitImage();
 
         backgroundPaint = new Paint();
         int color = ContextCompat.getColor(this,R.color.editorBackGroundColor);
         backgroundPaint.setColor(color);
 
+    }
+
+    private Bitmap fitImage() {
+        Point scrDimens = new Point();
+        Point imgDimens = new Point();
+        ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getSize(scrDimens);
+        imgDimens.set(bitmapOfEditImageOrigSize.getWidth(),bitmapOfEditImageOrigSize.getHeight());
+
+        Log.i(TAG,"*Display dimensions* " + scrDimens.x + "x" + scrDimens.y);
+        Bitmap fitBm;
+        float scaleFactor = 1f;
+
+        if ( imgDimens.x < scrDimens.x && imgDimens.y < scrDimens.y ) {
+            scaleFactor = 1f;
+        }
+        if ( imgDimens.x < scrDimens.x && imgDimens.y > scrDimens.y ) {
+            scaleFactor = ((float)scrDimens.y)/imgDimens.y;
+        }
+        if ( imgDimens.x > scrDimens.x && imgDimens.y < scrDimens.y ) {
+            scaleFactor = ((float)scrDimens.x)/imgDimens.x;
+        }
+        if ( imgDimens.x > scrDimens.x && imgDimens.y > scrDimens.y ) {
+            scaleFactor = Math.min( ((float)scrDimens.y)/imgDimens.y,
+                    ((float)scrDimens.x)/imgDimens.x );
+        }
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleFactor , scaleFactor);
+        fitBm = Bitmap.createBitmap(bitmapOfEditImageOrigSize, 0, 0, imgDimens.x, imgDimens.y, matrix, false);
+
+        return fitBm;
     }
 
 
